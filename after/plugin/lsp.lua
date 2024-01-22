@@ -30,6 +30,7 @@ require('mason-lspconfig').setup({
 })
 
 local cmp = require('cmp')
+local cmp_action = lsp_zero.cmp_action()
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
 
 cmp.setup({
@@ -42,9 +43,26 @@ cmp.setup({
   },
   formatting = lsp_zero.cmp_format(),
   mapping = cmp.mapping.preset.insert({
-    ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<Up>'] = cmp.mapping.select_prev_item({behavior = 'select'}),
+    ['<Down>'] = cmp.mapping.select_next_item({behavior = 'select'}),
+    ['<Tab>'] = cmp_action.luasnip_supertab(),
+    ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
+    ['<C-k>'] = cmp.mapping(function()
+      if cmp.visible() then
+        cmp.select_prev_item({ behavior = 'insert' })
+      else
+        cmp.complete()
+      end
+    end),
+    ['<C-j>'] = cmp.mapping(function()
+      if cmp.visible() then
+        cmp.select_next_item({ behavior = 'insert' })
+      else
+        cmp.complete()
+      end
+    end),
     ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+    ['<C-e>'] = cmp.mapping.abort(),
     ['<C-Space>'] = cmp.mapping.complete(),
   }),
 })
